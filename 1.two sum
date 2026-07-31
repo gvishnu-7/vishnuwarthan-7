@@ -1,0 +1,47 @@
+#include <stdlib.h>
+
+#define HASH_SIZE 20011 // A prime number larger than the max constraints for safety
+
+typedef struct {
+    int key;
+    int value;
+} HashNode;
+
+// Simple hash function using modulo arithmetic
+int hash(int key) {
+    int h = key % HASH_SIZE;
+    return h < 0 ? h + HASH_SIZE : h;
+}
+
+int* twoSum(int* nums, int numsSize, int target, int* returnSize) {
+    HashNode* hashTable = (HashNode*)calloc(HASH_SIZE, sizeof(HashNode));
+    int* result = (int*)malloc(2 * sizeof(int));
+    *returnSize = 2;
+
+    for (int i = 0; i < numsSize; i++) {
+        int complement = target - nums[i];
+        int h = hash(complement);
+
+        // Look up complement in the hash table
+        while (hashTable[h].value != 0) {
+            if (hashTable[h].key == complement) {
+                result[0] = hashTable[h].value - 1; // Retrieve the stored 0-based index
+                result[1] = i;
+                free(hashTable);
+                return result;
+            }
+            h = (h + 1) % HASH_SIZE; // Linear probing
+        }
+
+        // Insert current number and its 1-based index (to differentiate from uninitialized 0)
+        h = hash(nums[i]);
+        while (hashTable[h].value != 0) {
+            h = (h + 1) % HASH_SIZE;
+        }
+        hashTable[h].key = nums[i];
+        hashTable[h].value = i + 1; 
+    }
+
+    free(hashTable);
+    return NULL;
+}
