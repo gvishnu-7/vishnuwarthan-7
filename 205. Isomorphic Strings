@@ -1,0 +1,23 @@
+#include <stdbool.h>
+#include <string.h>
+
+bool isIsomorphic(char* s, char* t) {
+    
+    int mapS[256] = {0};
+    int mapT[256] = {0};
+    
+    int i = 0;
+    while (s[i] != '\0') {
+        
+        if (mapS[(unsigned char)s[i]] != mapT[(unsigned char)t[i]]) {
+            return false;
+        }
+
+        mapS[(unsigned char)s[i]] = i + 1;
+        mapT[(unsigned char)t[i]] = i + 1;
+        
+        i++;
+    }
+    
+    return true;
+}
