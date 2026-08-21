@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
+
+// Helper function to check if two words differ by exactly one character
+bool isOneCharDiff(const char* word1, const char* word2, int len) {
+    int diffCount = 0;
+    for (int i = 0; i < len; i++) {
+        if (word1[i] != word2[i]) {
+            diffCount++;
+            if (diffCount > 1) return false;
+        }
+    }
+    return diffCount == 1;
+}
+
+int ladderLength(char* beginWord, char* endWord, char** wordList, int wordListSize) {
+    int wordLen = strlen(beginWord);
+    
+    // Check if endWord is even in the wordList
+    bool hasEndWord = false;
+    for (int i = 0; i < wordListSize; i++) {
+        if (strcmp(wordList[i], endWord) == 0) {
+            hasEndWord = true;
+            break;
+        }
+    }
+    if (!hasEndWord) return 0;
+
+    // BFS Queue Setup
+    int* queue = (int*)malloc(wordListSize * sizeof(int));
+    int* depth = (int*)malloc(wordListSize * sizeof(int));
+    bool* visited = (bool*)calloc(wordListSize, sizeof(bool));
+    
+    int head = 0, tail = 0;
+
+    // Find all starting steps from beginWord
+    for (int i = 0; i < wordListSize; i++) {
+        if (isOneCharDiff(beginWord, wordList[i], wordLen)) {
+            queue[tail] = i;
+            depth[tail] = 2; // Step counts start at 2 (beginWord -> wordList[i])
+            visited[i] = true;
+            tail++;
+        }
+    }
+
+    // Process BFS Queue
+    while (head < tail) {
+        int currIdx = queue[head];
+        int currDepth = depth[head];
+        head++;
+
+        // If we found the target word, return total ladder steps
+        if (strcmp(wordList[currIdx], endWord) == 0) {
+            free(queue);
+            free(depth);
+            free(visited);
+            return currDepth;
+        }
+
+        // Check neighbors
+        for (int i = 0; i < wordListSize; i++) {
+            if (!visited[i] && isOneCharDiff(wordList[currIdx], wordList[i], wordLen)) {
+                queue[tail] = i;
+                depth[tail] = currDepth + 1;
+                visited[i] = true;
+                tail++;
+            }
+        }
+    }
+
+    // Clean up memory if no path is found
+    free(queue);
+    free(depth);
+    free(visited);
+    return 0;
+}
