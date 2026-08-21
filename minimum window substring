@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h> // Fixed: Changed from <climits> to <limits.h>
+
+char* minWindow(char* s, char* t) {
+    int m = strlen(s);
+    int n = strlen(t);
+    
+    if (m < n || n == 0) {
+        return "";
+    }
+
+    // ASCII frequency arrays for character tracking
+    int t_freq[128] = {0};
+    int window_freq[128] = {0};
+
+    // Populate frequencies for target string t
+    for (int i = 0; i < n; i++) {
+        t_freq[(unsigned char)t[i]]++;
+    }
+
+    int left = 0;
+    int right = 0;
+    int required_chars = 0;
+    
+    // Count unique characters required from t
+    for (int i = 0; i < 128; i++) {
+        if (t_freq[i] > 0) {
+            required_chars++;
+        }
+    }
+
+    int formed_chars = 0;
+    int min_len = INT_MAX;
+    int min_left = 0;
+
+    // Expand the window using the right pointer
+    while (right < m) {
+        char c = s[right];
+        window_freq[(unsigned char)c]++;
+
+        // If current character matches the required frequency in t
+        if (t_freq[(unsigned char)c] > 0 && window_freq[(unsigned char)c] == t_freq[(unsigned char)c]) {
+            formed_chars++;
+        }
+
+        // Try to contract the window from the left
+        while (formed_chars == required_chars && left <= right) {
+            c = s[left];
+
+            // Save smaller window metrics
+            if (right - left + 1 < min_len) {
+                min_len = right - left + 1;
+                min_left = left;
+            }
+
+            // Remove left character from window tracking
+            window_freq[(unsigned char)c]--;
+            if (t_freq[(unsigned char)c] > 0 && window_freq[(unsigned char)c] < t_freq[(unsigned char)c]) {
+                formed_chars--;
+            }
+            left++;
+        }
+        right++;
+    }
+
+    // Return empty string if no valid window found
+    if (min_len == INT_MAX) {
+        return "";
+    }
+
+    // Allocate memory for the resulting substring
+    char* result = (char*)malloc((min_len + 1) * sizeof(char));
+    strncpy(result, s + min_left, min_len);
+    result[min_len] = '\0';
+
+    return result;
+}
+
+
