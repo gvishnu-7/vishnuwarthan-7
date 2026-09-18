@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int climbStairs(int n) {
+    // Base cases
+    if (n <= 2) {
+        return n;
+    }
+    
+    // Using two variables instead of an array saves memory
+    int first = 1;  // Ways to reach the 1st step
+    int second = 2; // Ways to reach the 2nd step
+    int current = 0;
+    
+    // Bottom-up approach to calculate ways for the 'n'th step
+    for (int i = 3; i <= n; i++) {
+        current = first + second;
+        first = second;
+        second = current;
+    }
+    
+    return second;
+}
