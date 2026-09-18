@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool isValid(char* s) {
+    int length = strlen(s);
+    
+    // Allocate a stack array. In the worst case, all characters are opening brackets.
+    char* stack = (char*)malloc(length * sizeof(char));
+    int top = -1; // Index of the top element (-1 means empty)
+
+    for (int i = 0; i < length; i++) {
+        char current = s[i];
+
+        // Push opening brackets onto the stack
+        if (current == '(' || current == '{' || current == '[') {
+            stack[++top] = current;
+        } 
+        // Process closing brackets
+        else {
+            // If stack is empty, there's no matching opening bracket
+            if (top == -1) {
+                free(stack);
+                return false;
+            }
+
+            char openBracket = stack[top--]; // Pop the top element
+
+            // Check if the popped bracket matches the closing bracket
+            if ((current == ')' && openBracket != '(') ||
+                (current == '}' && openBracket != '{') ||
+                (current == ']' && openBracket != '[')) {
+                free(stack);
+                return false;
+            }
+        }
+    }
+
+    // If the stack is empty, all brackets were validly matched
+    bool result = (top == -1);
+    free(stack);
+    return result;
+}
