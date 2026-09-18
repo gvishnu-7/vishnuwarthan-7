@@ -1,0 +1,39 @@
+#include <stdbool.h>
+#include <stdlib.h>
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+// Helper function to check if two subtrees are mirror images of each other
+bool isMirror(struct TreeNode* t1, struct TreeNode* t2) {
+    // Case 1: Both nodes are NULL -> They match symmetrically
+    if (t1 == NULL && t2 == NULL) {
+        return true;
+    }
+    
+    // Case 2: One node is NULL and the other is not -> Symmetrically mismatched
+    if (t1 == NULL || t2 == NULL) {
+        return false;
+    }
+    
+    // Case 3: The values don't match, or the inner/outer children don't match
+    return (t1->val == t2->val) 
+        && isMirror(t1->left, t2->right)   // Outer children match
+        && isMirror(t1->right, t2->left);  // Inner children match
+}
+
+bool isSymmetric(struct TreeNode* root) {
+    // An empty tree is technically symmetric
+    if (root == NULL) {
+        return true;
+    }
+    
+    // Compare the left and right subtrees of the root node
+    return isMirror(root->left, root->right);
+}
