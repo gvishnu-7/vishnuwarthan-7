@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* addBinary(char* a, char* b) {
+    int lenA = strlen(a);
+    int lenB = strlen(b);
+    
+    // The maximum possible length of the result string is max(lenA, lenB) + 1 (for potential carry)
+    int maxLen = (lenA > lenB ? lenA : lenB) + 1;
+    
+    // Allocate memory for the result string plus the null terminator '\0'
+    char* result = (char*)malloc((maxLen + 1) * sizeof(char));
+    result[maxLen] = '\0'; // Set the null terminator at the end
+    
+    int i = lenA - 1;
+    int j = lenB - 1;
+    int k = maxLen - 1;
+    int carry = 0;
+    
+    // Loop from the back of both strings until all digits and carries are processed
+    while (i >= 0 || j >= 0 || carry > 0) {
+        int sum = carry;
+        
+        if (i >= 0) {
+            sum += a[i] - '0'; // Convert character to integer
+            i--;
+        }
+        if (j >= 0) {
+            sum += b[j] - '0'; // Convert character to integer
+            j--;
+        }
+        
+        result[k] = (sum % 2) + '0'; // Get binary digit and convert back to character
+        carry = sum / 2;             // Calculate new carry
+        k--;
+    }
+    
+    // If the first character slot wasn't used (no final carry over), shift the pointer forward
+    return &result[k + 1];
+}
