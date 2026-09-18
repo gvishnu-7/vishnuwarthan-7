@@ -1,0 +1,31 @@
+#include <stdbool.h>
+#include <stdlib.h>
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+bool isSameTree(struct TreeNode* p, struct TreeNode* q) {
+    // Case 1: Both nodes are NULL -> Trees are structurally identical up to this point
+    if (p == NULL && q == NULL) {
+        return true;
+    }
+    
+    // Case 2: One node is NULL and the other is not -> Trees are structurally different
+    if (p == NULL || q == NULL) {
+        return false;
+    }
+    
+    // Case 3: The values of the current nodes do not match
+    if (p->val != q->val) {
+        return false;
+    }
+    
+    // Case 4: The values match, so check both the left and right subtrees recursively
+    return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
+}
