@@ -1,0 +1,36 @@
+#include <stdbool.h>
+#include <stdlib.h>
+
+void collectElements(struct TreeNode* root, int* arr, int* size) {
+    if (root == NULL) {
+        return;
+    }
+    collectElements(root->left, arr, size);
+    arr[(*size)++] = root->val;
+    collectElements(root->right, arr, size);
+}
+
+bool findTarget(struct TreeNode* root, int k) {
+    int* arr = (int*)malloc(10001 * sizeof(int));
+    int size = 0;
+    
+    collectElements(root, arr, &size);
+    
+    int left = 0;
+    int right = size - 1;
+    
+    while (left < right) {
+        int current_sum = arr[left] + arr[right];
+        if (current_sum == k) {
+            free(arr);
+            return true;
+        } else if (current_sum < k) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    
+    free(arr);
+    return false;
+}
