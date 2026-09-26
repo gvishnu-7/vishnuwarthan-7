@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_SIZE 100
+
+// Define a simple Queue structure using an array
+typedef struct {
+    int data[MAX_SIZE];
+    int front;
+    int rear;
+} Queue;
+
+void initQueue(Queue* q) {
+    q->front = 0;
+    q->rear = 0;
+}
+
+bool isEmpty(Queue* q) {
+    return q->front == q->rear;
+}
+
+void enqueue(Queue* q, int x) {
+    if (q->rear < MAX_SIZE) {
+        q->data[q->rear++] = x;
+    }
+}
+
+int dequeue(Queue* q) {
+    if (!isEmpty(q)) {
+        return q->data[q->front++];
+    }
+    return -1;
+}
+
+int size(Queue* q) {
+    return q->rear - q->front;
+}
+
+// Define MyStack using two queues
+typedef struct {
+    Queue q1;
+    Queue q2;
+} MyStack;
+
+MyStack* myStackCreate() {
+    MyStack* obj = (MyStack*)malloc(sizeof(MyStack));
+    initQueue(&(obj->q1));
+    initQueue(&(obj->q2));
+    return obj;
+}
+
+void myStackPush(MyStack* obj, int x) {
+    // 1. Push x to q2
+    enqueue(&(obj->q2), x);
+    
+    // 2. Move all elements from q1 to q2
+    while (!isEmpty(&(obj->q1))) {
+        enqueue(&(obj->q2), dequeue(&(obj->q1)));
+    }
+    
+    // 3. Swap the names/structures of q1 and q2
+    Queue temp = obj->q1;
+    obj->q1 = obj->q2;
+    obj->q2 = temp;
+}
+
+int myStackPop(MyStack* obj) {
+    return dequeue(&(obj->q1));
+}
+
+int myStackTop(MyStack* obj) {
+    return obj->q1.data[obj->q1.front];
+}
+
+bool myStackEmpty(MyStack* obj) {
+    return isEmpty(&(obj->q1));
+}
+
+void myStackFree(MyStack* obj) {
+    free(obj);
+}
