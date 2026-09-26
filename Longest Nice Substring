@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+char* longestNiceSubstring(char* s) {
+    int n = strlen(s);
+    int max_len = 0;
+    int start_idx = -1;
+
+    for (int i = 0; i < n; i++) {
+        for (int j = i; j < n; j++) {
+            // Track presence of each letter (lowercase/uppercase)
+            bool lower[26] = {false};
+            bool upper[26] = {false};
+
+            // Fill presence arrays for substring from i to j
+            for (int k = i; k <= j; k++) {
+                if (s[k] >= 'a' && s[k] <= 'z') {
+                    lower[s[k] - 'a'] = true;
+                } else if (s[k] >= 'A' && s[k] <= 'Z') {
+                    upper[s[k] - 'A'] = true;
+                }
+            }
+
+            // Verify if the substring is nice
+            bool is_nice = true;
+            for (int k = 0; k < 26; k++) {
+                if (lower[k] != upper[k]) {
+                    is_nice = false;
+                    break;
+                }
+            }
