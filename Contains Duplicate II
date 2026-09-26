@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+// Structure to store the value and its original index
+typedef struct {
+    int val;
+    int index;
+} Element;
+
+// Comparison function for qsort
+int compare(const void *a, const void *b) {
+    Element *elemA = (Element *)a;
+    Element *elemB = (Element *)b;
+    
+    // Sort primarily by value
+    if (elemA->val < elemB->val) return -1;
+    if (elemA->val > elemB->val) return 1;
+    
+    // If values are equal, sort by index
+    return elemA->index - elemB->index;
+}
+
+bool containsNearbyDuplicate(int* nums, int numsSize, int k) {
+    if (numsSize <= 1 || k <= 0) {
+        return false;
+    }
+
+    // Allocate memory for the elements array
+    Element *elements = (Element *)malloc(numsSize * sizeof(Element));
+    if (elements == NULL) {
+        return false; // Memory allocation failed
+    }
+
+    // Populate the array with values and their original indices
+    for (int i = 0; i < numsSize; i++) {
+        elements[i].val = nums[i];
+        elements[i].index = i;
+    }
+
+    // Sort the array based on values
+    qsort(elements, numsSize, sizeof(Element), compare);
+
+    // Check adjacent elements in the sorted array
+    for (int i = 0; i < numsSize - 1; i++) {
+        // If values match and their index difference is <= k
+        if (elements[i].val == elements[i + 1].val) {
+            if (abs(elements[i].index - elements[i + 1].index) <= k) {
+                free(elements);
+                return true;
+            }
+        }
+    }
+
+    // Clean up allocated memory
+    free(elements);
+    return false;
+}
