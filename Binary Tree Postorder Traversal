@@ -1,0 +1,40 @@
+#include <stdlib.h>
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+// Helper function to perform the postorder traversal recursively
+void postorder(struct TreeNode* root, int* result, int* returnSize) {
+    if (root == NULL) {
+        return;
+    }
+    
+    // 1. Traverse the left subtree
+    postorder(root->left, result, returnSize);
+    
+    // 2. Traverse the right subtree
+    postorder(root->right, result, returnSize);
+    
+    // 3. Visit the root node
+    result[(*returnSize)++] = root->val;
+}
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* postorderTraversal(struct TreeNode* root, int* returnSize) {
+    // Allocate memory for the result array based on the maximum constraint (100 nodes)
+    int* result = (int*)malloc(100 * sizeof(int));
+    *returnSize = 0;
+    
+    // Start the recursive traversal
+    postorder(root, result, returnSize);
+    
+    return result;
+}
